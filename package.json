@@ -1,6 +1,6 @@
 {
   "name": "chaya-ui",
-  "version": "1.0.0-beta.87",
+  "version": "1.0.0-beta.88",
   "description": "Modern, Data-First UI Components for React",
   "scripts": {
     "tailwind": "tailwindcss -i ./src/style.scss -o ./dist/style.css -c ./tailwind.config.cjs",
