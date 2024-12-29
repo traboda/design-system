@@ -10,7 +10,14 @@ import { IconProps, Icons } from '../Icon';
 import { getTheme } from './themes';
 
 const ThemeScript = memo(
-  ({ theme, isDarkTheme }: { theme: Theme; isDarkTheme: boolean }) => {
+  ({ theme,
+    isDarkTheme,
+    nonce,
+  }: {
+    theme: Theme;
+    isDarkTheme: boolean;
+    nonce?: string
+  }) => {
     const generateCSS = () => {
       const cssProperties = [];
       Object.entries(theme).forEach(([key, value]) => {
@@ -57,6 +64,7 @@ const ThemeScript = memo(
         if (!style) {
           style = document.createElement('style');
           style.id = 'theme-style';
+          style.nonce = '${nonce}';
           document.head.appendChild(style);
         }
         style.innerHTML = \`:root { ${css} }\`;
@@ -78,6 +86,7 @@ const ThemeScript = memo(
         if (!style) {
           style = document.createElement('style');
           style.id = 'theme-style';
+          style.nonce = `'${nonce}'`;
           document.head.appendChild(style);
         }
         style.innerHTML = `:root { ${css} }`;
@@ -93,6 +102,7 @@ const ThemeScript = memo(
     return (
       <script
         id="theme-script"
+        nonce={nonce ? `'${nonce}'` : undefined}
         dangerouslySetInnerHTML={{
           __html: `!function(){${getScriptSrc()}}();`,
         }}
@@ -114,11 +124,16 @@ export type ChayaProviderType = {
   iconWrapper?: IconWrapperType,
   theme?: Theme,
   isDarkTheme?: boolean,
+  nonce?: string,
 };
 
 const ChayaProvider = ({
-  children, theme,
-  linkWrapper = defaultLinkWrapper, iconWrapper = defaultIconWrapper, isDarkTheme: _dark = false,
+  children,
+  theme,
+  linkWrapper = defaultLinkWrapper,
+  iconWrapper = defaultIconWrapper,
+  isDarkTheme: _dark = false,
+  nonce,
 }: ChayaProviderType) => {
 
   const isDarkTheme = theme ? useMemo(() => Color(theme?.background).isDark(), [theme]) : _dark;
@@ -134,7 +149,7 @@ const ChayaProvider = ({
         isDarkTheme,
       }}
     >
-      <ThemeScript theme={currentTheme} isDarkTheme={isDarkTheme} />
+      <ThemeScript theme={currentTheme} isDarkTheme={isDarkTheme} nonce={nonce} />
       {children}
     </ChayaContext.Provider>
   );
